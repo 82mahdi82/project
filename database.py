@@ -64,9 +64,9 @@ def creat_sales_row_table(inv_id,product_id,qty):
 def creat_store_database():
     cnx = mysql.connector.connect(user='root', password='pVs1hTqRwO8x$bPH2Mjw',host='store-klw-service')
     cursor = cnx.cursor()
-    cursor.execute("DROP database IF EXISTS store")
-    cursor.execute("create database if not exists store")
-    cursor.execute("use store")
+    cursor.execute("DROP database IF EXISTS storefgx_db")
+    cursor.execute("create database if not exists storefgx_db")
+    cursor.execute("use storefgx_db")
     cursor.execute("CREATE TABLE if not exists customer (cid bigint PRIMARY KEY, name VARCHAR(25) not null,phone VARCHAR(15) ,email VARCHAR(100), address text)")
     cursor.execute("CREATE TABLE if not exists product (product_id bigint AUTO_INCREMENT PRIMARY KEY,brand VARCHAR(25) not null, name VARCHAR(25) not null,size float not null,price float(10,2),code int)")
     cursor.execute("CREATE TABLE if not exists sales (inv_id bigint PRIMARY KEY, cid bigint not null,date datetime not null default current_timestamp,constraint fk_cid foreign key(cid) references customer(cid))")
