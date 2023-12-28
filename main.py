@@ -589,7 +589,7 @@ def cart(m):
         list_price=database.use_product_table_where(f"product_id={b['product_id']}")
         print(list_price)
         for i in list_price:
-            bot.copy_message(cid, -1002046803532, i["code"], reply_markup=gen_cart_markup(str(i["code"]), str(i["size"]), b["qty"]),caption=f"تعداد :'{b["qty"]}' با سایز '{i["size"]}' از این محصول. قیمت:{i['price']*b["qty"]}")
+            bot.copy_message(cid, -1002046803532, i["code"], reply_markup=gen_cart_markup(str(i["code"]), str(i["size"]), b["qty"]),caption=f"""تعداد :'{b["qty"]}' با سایز '{i["size"]}' از این محصول. قیمت:{i['price']*b["qty"]}""")
             price_total+=i["price"]*b["qty"]
 
     # for i in shopping_cart:
