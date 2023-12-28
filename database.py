@@ -132,47 +132,47 @@ def use_customer_table_where(where):
 
 
 
-# creat_store_database()
+creat_store_database()
 
 
-# #drill granite
-# code=2
-# siz=[3,4,5,6,7,8,10,12,14]
-# pr=[155000,175000,195000,245000,265000,300000,415000,555000,665000]
-# for size,price in zip(siz,pr):
-#     creat_product_table("FORCE","granite",size, price,code)
+#drill granite
+code=2
+siz=[3,4,5,6,7,8,10,12,14]
+pr=[155000,175000,195000,245000,265000,300000,415000,555000,665000]
+for size,price in zip(siz,pr):
+    creat_product_table("FORCE","granite",size, price,code)
 
 
-# #drill HSS-CO 5%
-# code=3
-# siz1=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16]
-# pr1=[49000,61000,75000,95000,128000,185000,215000,235000,258000,320000,365000,450000,530000,600000,680000,850000,980000,1150000,1230000,1280000,1650000,1850000,2050000,2350000,2500000,2750000,2950000,3300000,3450000,3850000,3950000,4300000]
-# for size,price in zip(siz1,pr1):
-#     creat_product_table("FORCE","HSS-CO 5%",size, price,code)
+#drill HSS-CO 5%
+code=3
+siz1=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16]
+pr1=[49000,61000,75000,95000,128000,185000,215000,235000,258000,320000,365000,450000,530000,600000,680000,850000,980000,1150000,1230000,1280000,1650000,1850000,2050000,2350000,2500000,2750000,2950000,3300000,3450000,3850000,3950000,4300000]
+for size,price in zip(siz1,pr1):
+    creat_product_table("FORCE","HSS-CO 5%",size, price,code)
 
 
-# #drill HSS-CO
-# code=4
-# siz2=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16]
-# pr2=[32000,38000,57000,70000,78000,90000,95000,110000,120000,138000,160000,190000,220000,240000,260000,380000,410000,450000,480000,495000,570000,650000,700000,840000,910000,950000,990000,1680000,1,1800000,1,2150000]
-# for size,price in zip(siz2,pr2):
-#     creat_product_table("TALENT","HSS-CO",size, price,code)
-#     # cnx = mysql.connector.connect(user='root', password='pVs1hTqRwO8x$bPH2Mjw',host='store-klw-service',database="store")
-#     # cursor = cnx.cursor()
-#     # cursor.execute(f"update product set brand='TALENT',name='HSS-CO' where size={size} and price={price}")
-#     # cnx.commit()
-#     # cursor.close()
+#drill HSS-CO
+code=4
+siz2=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16]
+pr2=[32000,38000,57000,70000,78000,90000,95000,110000,120000,138000,160000,190000,220000,240000,260000,380000,410000,450000,480000,495000,570000,650000,700000,840000,910000,950000,990000,1680000,1,1800000,1,2150000]
+for size,price in zip(siz2,pr2):
+    creat_product_table("TALENT","HSS-CO",size, price,code)
+    # cnx = mysql.connector.connect(user='root', password='pVs1hTqRwO8x$bPH2Mjw',host='store-klw-service',database="store")
+    # cursor = cnx.cursor()
+    # cursor.execute(f"update product set brand='TALENT',name='HSS-CO' where size={size} and price={price}")
+    # cnx.commit()
+    # cursor.close()
 
-# #drill all work
-# code=5
-# siz3=[3,4,5,6,7,8,10,12]
-# pr3=[280000,300000,330000,380000,450000,500000,600000,680000]
-# for size,price in zip(siz3,pr3):
-#     creat_product_table("FORCE","all work",size, price,code)
+#drill all work
+code=5
+siz3=[3,4,5,6,7,8,10,12]
+pr3=[280000,300000,330000,380000,450000,500000,600000,680000]
+for size,price in zip(siz3,pr3):
+    creat_product_table("FORCE","all work",size, price,code)
 
-# # wood hold saw
-# code=6
-# siz4=[16,20,22,25,30,35,40,50,60]
-# pr4=[450000,550000,600000,690000,820000,820000,1000000,1350000,1600000]
-# for size,price in zip(siz4,pr4):
-#     creat_product_table("FORCETECH","gas drill",size, price,code)
+# wood hold saw
+code=6
+siz4=[16,20,22,25,30,35,40,50,60]
+pr4=[450000,550000,600000,690000,820000,820000,1000000,1350000,1600000]
+for size,price in zip(siz4,pr4):
+    creat_product_table("FORCETECH","gas drill",size, price,code)
