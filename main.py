@@ -126,7 +126,7 @@ def show_cart(cid):
     list_shoppingcart=database.use_shopping_cart_table_where(f"cid={cid}")
     price_total=0
     for b in list_shoppingcart:
-        list_price=database.use_product_table_where(f"product_id={b["product_id"]}")
+        list_price=database.use_product_table_where(f"product_id={b['product_i']}")
         for i in list_price:
             price_total+=i["price"]*b["qty"]
     markup2 = InlineKeyboardMarkup()
