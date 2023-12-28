@@ -128,13 +128,14 @@ def show_cart(cid):
     # if len(list_shoppingcart)==0:
     #     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     #     markup.add(KeyboardButton("منوی اصلی "))
-    #     return bot.edit_message_text("سبد خرید شما خالی است", cid,sssss,reply_markup=markup)
+    #     
     price_total=0
     for b in list_shoppingcart:
         list_price=database.use_product_table_where(f"product_id={b['product_id']}")
         for i in list_price:
             price_total+=i["price"]*b["qty"]
-    
+    if price_total==0:
+        return bot.edit_message_text("سبد خرید شما خالی است", cid,sssss)
     markup2 = InlineKeyboardMarkup()
     markup2.add(InlineKeyboardButton(
                 "خرید و ثبت نهایی", callback_data="shop_cart"))
