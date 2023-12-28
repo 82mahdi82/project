@@ -124,6 +124,7 @@ def show_cart(cid):
     # markup2.add(InlineKeyboardButton(
     #             "خرید و ثبت نهایی", callback_data="shop_cart"))
     list_shoppingcart=database.use_shopping_cart_table_where(f"cid={cid}")
+    print(len(list_shoppingcart))
     if len(list_shoppingcart)==0:
         markup = ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(KeyboardButton("منوی اصلی "))
