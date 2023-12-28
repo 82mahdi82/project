@@ -165,7 +165,7 @@ def call_callback_data(call):
         list_price=database.use_product_table_where(f"code={int(code)} and size={float(size)}")
         for i in list_price:
             # qty=database.use_shopping_cart_table_where(f"cid={cid} and product_id={i['product_id']}")[0]["qty"]
-            bot.edit_message_caption(f"تعداد :'{qty}' با سایز '{size}' از این محصول. قیمت :{i['price']*qty}",cid, mid, reply_markup=gen_cart_markup(code, size, int(qty)))
+            bot.edit_message_caption(f"تعداد :'{qty}' با سایز '{size}' از این محصول. قیمت :{i['price']*int(qty)}",cid, mid, reply_markup=gen_cart_markup(code, size, int(qty)))
 
         # for i in list_price:
         #     bot.edit_message_caption(f"تعداد :'{qty}' با سایز '{size}' از این محصول. قیمت :{i['price']*shopping_cart[cid][code][size]}",cid, mid, reply_markup=gen_cart_markup(code, size, int(qty)))
