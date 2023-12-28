@@ -154,10 +154,9 @@ def call_callback_data(call):
             product_id=i["product_id"]
         list_shoppingcart=database.use_shopping_cart_table(cid,product_id)
         if len(list_shoppingcart)==0:
-            database.insert_shopping_cart_table(cid,product_id,qty)
+            database.insert_shopping_cart_table(cid,product_id,int(qty))
         else:
-            qty=int(qty)
-            database.update_shopping_cart_table(cid,product_id,qty)
+            database.update_shopping_cart_table(cid,product_id,int(qty))
                 
         # shopping_cart.setdefault(cid, {})
         # shopping_cart[cid].setdefault(code, {})
