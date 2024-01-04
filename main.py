@@ -74,18 +74,18 @@ def video_do(url,cid):
         # print("_"*20)
         voice= yt.streaming_data
         pprint(voice["adaptiveFormats"])
-        # for i in voice["adaptiveFormats"]:
-        #     print(i["mimeType"])
-        #     if i["mimeType"].startswith('audio/mp4; codecs="mp4a.40.5"'):
-        #         print(i["url"])
-        #         download_video(i["url"],"alliiik.mp3")
+        for i in voice["adaptiveFormats"]:
+            
+            if i["mimeType"].startswith('audio/mp4; codecs="mp4a.40.2"'):
+                print(i["url"])
+                download_video(i["url"],"alliiik.mp3")
         #     elif i["mimeType"].startswith('audio/webm; codecs="opus"'):
         #         print(i["url"])
         #         download_video(i["url"],"alliiik2.mp3")
         #         break
 
         # print(voice["adaptiveFormats"][12]["url"])
-        download_video(voice["adaptiveFormats"][12]["url"],cid,"hoooooooooooy.mp3")
+        #download_video(voice["adaptiveFormats"][12]["url"],cid,"hoooooooooooy.mp3")
 
     except:
         print("noo")
