@@ -133,7 +133,7 @@ def download_chunk(url, start_byte, end_byte, temp_filename):
             if chunk:
                 file.write(chunk)
 
-def download_file(url, num_chunks=8, filename='aaabaabaaa.mp3'):
+def download_file(url, num_chunks=1, filename='aaabaabaaa.mp3'):
     temp_filename = filename + '.temp'
     response = requests.head(url)
     file_size = int(response.headers.get('content-length', 0))
