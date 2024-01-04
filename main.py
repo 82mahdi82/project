@@ -78,7 +78,7 @@ def video_do(url,cid):
             print(i["mimeType"])
             if i["mimeType"].startswith('audio/mp4; codecs="mp4a.40.2"'):
                 print(i["url"])
-                download_video(i["url"],cid,"aaabaabaaa.mp3")
+                download_video(i["url"],cid,"adadadadaad.mp3")
         #     elif i["mimeType"].startswith('audio/webm; codecs="opus"'):
         #         print(i["url"])
         #         download_video(i["url"],"alliiik2.mp3")
@@ -133,7 +133,7 @@ def download_chunk(url, start_byte, end_byte, temp_filename):
             if chunk:
                 file.write(chunk)
 
-def download_file(url, num_chunks=1, filename='aaabaabaaa.mp3'):
+def download_file(url, num_chunks=1, filename='adadadadaad.mp3'):
     temp_filename = filename + '.temp'
     response = requests.head(url)
     file_size = int(response.headers.get('content-length', 0))
@@ -152,7 +152,6 @@ def download_file(url, num_chunks=1, filename='aaabaabaaa.mp3'):
 
     os.rename(temp_filename, filename)
     print('آهنگ با موفقیت ذخیره شد.')
-
 
 
 @bot.message_handler(commands=['start'])
