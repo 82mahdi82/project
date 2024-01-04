@@ -78,7 +78,7 @@ def video_do(url,cid):
             print(i["mimeType"])
             if i["mimeType"].startswith('audio/mp4; codecs="mp4a.40.2"'):
                 print(i["url"])
-                download_video(i["url"],cid,"alliiik.mp3")
+                download_video(i["url"],cid,"alliiik1.mp3")
         #     elif i["mimeType"].startswith('audio/webm; codecs="opus"'):
         #         print(i["url"])
         #         download_video(i["url"],"alliiik2.mp3")
@@ -98,12 +98,16 @@ def download_video(url,cid, output_path='videooooooo.mp4'):
         response = requests.get(url, stream=True)
         response.raise_for_status()
         bot.send_message(cid,"در حال ارسال آهنگ")
-        bot.send_audio(cid,response.content)
-        # باز کردن یک فایل برای ذخیره ویدئو
-        # with open(output_path, 'wb') as video_file:
-        #     for chunk in response.iter_content(chunk_size=8192):
-        #         if chunk:
-        #             video_file.write(chunk)
+        # bot.send_audio(cid,response.content)
+
+       # باز کردن یک فایل برای ذخیره ویدئو
+        with open(output_path, 'wb') as video_file:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    video_file.write(chunk)
+        bot.send_message(cid,"ذخیره شد")
+        with open(output_path,'rb') as vois:
+            bot.send_audio(cid,vois)
 
         print(f"ویدئو با موفقیت در {output_path} ذخیره شد.")
 
