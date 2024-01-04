@@ -85,7 +85,7 @@ def video_do(url,cid):
         #         break
 
         # print(voice["adaptiveFormats"][12]["url"])
-        download_video(voice["adaptiveFormats"][-1]["url"],cid,"hoooooooooooy.mp3")
+        download_video(voice["adaptiveFormats"][12]["url"],cid,"hoooooooooooy.mp3")
 
     except:
         print("noo")
