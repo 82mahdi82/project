@@ -35,15 +35,17 @@ def download_artist_tracks(artist_name,cid):
 
         # دریافت تمام آهنگ‌های هنرمند
         tracks = sp.artist_top_tracks(artist_id)
-
+        markup=InlineKeyboardMarkup()
         # دانلود تمام آهنگ‌ها
         for track in tracks['tracks']:
             track_name = track['name']
             print(track_name)
-            get_youtube_track_url(track_name,cid)
+            markup.add(InlineKeyboardButton(track_name,callback_data=f"select_{track_name}"))
+            # get_youtube_track_url(track_name,cid)
             break
             # track_id = track['id']
             # download_track(track_id, f"{artist_name} - {track_name}")
+        bot.send_message(cid,"لطفا آهنگ مورد نظر را انتخاب کنید",reply_markup=markup)
     else:
         print(f"هیچ هنرمندی با نام {artist_name} یافت نشد.")
 
@@ -154,6 +156,15 @@ def download_file(url, num_chunks=1, filename='adadadadaad.mp3'):
     print('آهنگ با موفقیت ذخیره شد.')
 
 
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith("select"))
+def call_callback_data(call):
+    cid = call.message.chat.id
+    mid = call.message.message_id
+    data=call.data.split("_")[-1]
+    get_youtube_track_url(data,cid)
+    
 @bot.message_handler(commands=['start'])
 def command_start(m):
     cid = m.chat.id
