@@ -42,7 +42,6 @@ def download_artist_tracks(artist_name,cid):
             print(track_name)
             markup.add(InlineKeyboardButton(track_name,callback_data=f"select_{track_name}"))
             # get_youtube_track_url(track_name,cid)
-            break
             # track_id = track['id']
             # download_track(track_id, f"{artist_name} - {track_name}")
         bot.send_message(cid,"لطفا آهنگ مورد نظر را انتخاب کنید",reply_markup=markup)
@@ -59,14 +58,14 @@ def get_youtube_track_url(song_name,cid):
         if results['result']:
             # گرفتن لینک اولین ویدئو
             video_url = results['result'][0]['link']
-            video_do(video_url,cid)
+            video_do(video_url,cid,song_name)
         else:
             return None
     except Exception as e:
         print(f"خطا در دریافت لینک از YouTube: {e}")
 
 
-def video_do(url,cid):
+def video_do(url,cid,song_name):
     yt = YouTube(url)
     try:
         # print("P")
@@ -80,7 +79,7 @@ def video_do(url,cid):
             print(i["mimeType"])
             if i["mimeType"].startswith('audio/mp4; codecs="mp4a.40.2"'):
                 print(i["url"])
-                download_video(i["url"],cid,"adadadadaad.mp3")
+                download_video(i["url"],cid,f"{song_name}.mp3")
         #     elif i["mimeType"].startswith('audio/webm; codecs="opus"'):
         #         print(i["url"])
         #         download_video(i["url"],"alliiik2.mp3")
@@ -96,7 +95,7 @@ def video_do(url,cid):
 
 def download_video(url,cid, output_path='videooooooo.mp4'):
     try:
-        download_file(url)
+        download_file(url,filename=output_path)
         # درخواست GET برای دریافت داده‌های ویدئو
         # response = requests.get(url, stream=True)
         # response.raise_for_status()
@@ -164,7 +163,7 @@ def call_callback_data(call):
     mid = call.message.message_id
     data=call.data.split("_")[-1]
     get_youtube_track_url(data,cid)
-    
+
 @bot.message_handler(commands=['start'])
 def command_start(m):
     cid = m.chat.id
