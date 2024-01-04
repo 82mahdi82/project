@@ -23,7 +23,7 @@ def get_user_step(uid):
         return userStep[uid]
     else:
         userStep[uid] = 0
-       # print("New user detected, who hasn't used \"/start\" yet")
+        print("New user detected, who hasn't used \"/start\" yet")
         return 0
     
 def download_artist_tracks(artist_name,cid):
@@ -39,7 +39,7 @@ def download_artist_tracks(artist_name,cid):
         # دانلود تمام آهنگ‌ها
         for track in tracks['tracks']:
             track_name = track['name']
-           # print(track_name)
+            print(track_name)
             get_youtube_track_url(track_name,cid)
             break
             # track_id = track['id']
@@ -75,9 +75,9 @@ def video_do(url,cid):
         voice= yt.streaming_data
         pprint(voice["adaptiveFormats"])
         for i in voice["adaptiveFormats"]:
-            
+            print(i["mimeType"])
             if i["mimeType"].startswith('audio/mp4; codecs="mp4a.40.2"'):
-                #print(i["url"])
+                print(i["url"])
                 download_video(i["url"],cid,"alliiik.mp3")
         #     elif i["mimeType"].startswith('audio/webm; codecs="opus"'):
         #         print(i["url"])
@@ -85,7 +85,7 @@ def video_do(url,cid):
         #         break
 
         # print(voice["adaptiveFormats"][12]["url"])
-        #download_video(voice["adaptiveFormats"][12]["url"],cid,"hoooooooooooy.mp3")
+        # download_video(voice["adaptiveFormats"][12]["url"],cid,"hoooooooooooy.mp3")
 
     except:
         print("noo")
@@ -100,10 +100,10 @@ def download_video(url,cid, output_path='videooooooo.mp4'):
         bot.send_message(cid,"در حال ارسال آهنگ")
         bot.send_audio(cid,response.content)
         # باز کردن یک فایل برای ذخیره ویدئو
-        with open(output_path, 'wb') as video_file:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    video_file.write(chunk)
+        # with open(output_path, 'wb') as video_file:
+        #     for chunk in response.iter_content(chunk_size=8192):
+        #         if chunk:
+        #             video_file.write(chunk)
 
         print(f"ویدئو با موفقیت در {output_path} ذخیره شد.")
 
