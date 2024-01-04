@@ -23,7 +23,7 @@ def get_user_step(uid):
         return userStep[uid]
     else:
         userStep[uid] = 0
-        print("New user detected, who hasn't used \"/start\" yet")
+       # print("New user detected, who hasn't used \"/start\" yet")
         return 0
     
 def download_artist_tracks(artist_name,cid):
@@ -39,7 +39,7 @@ def download_artist_tracks(artist_name,cid):
         # دانلود تمام آهنگ‌ها
         for track in tracks['tracks']:
             track_name = track['name']
-            print(track_name)
+           # print(track_name)
             get_youtube_track_url(track_name,cid)
             break
             # track_id = track['id']
@@ -77,7 +77,7 @@ def video_do(url,cid):
         for i in voice["adaptiveFormats"]:
             
             if i["mimeType"].startswith('audio/mp4; codecs="mp4a.40.2"'):
-                print(i["url"])
+                #print(i["url"])
                 download_video(i["url"],"alliiik.mp3")
         #     elif i["mimeType"].startswith('audio/webm; codecs="opus"'):
         #         print(i["url"])
