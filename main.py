@@ -78,7 +78,7 @@ def video_do(url,cid):
             print(i["mimeType"])
             if i["mimeType"].startswith('audio/mp4; codecs="mp4a.40.2"'):
                 print(i["url"])
-                download_video(i["url"],cid,"alliiik1.mp3")
+                download_video(i["url"],cid,"aaabaabaaa.mp3")
         #     elif i["mimeType"].startswith('audio/webm; codecs="opus"'):
         #         print(i["url"])
         #         download_video(i["url"],"alliiik2.mp3")
@@ -94,18 +94,19 @@ def video_do(url,cid):
 
 def download_video(url,cid, output_path='videooooooo.mp4'):
     try:
+        download_file(url)
         # درخواست GET برای دریافت داده‌های ویدئو
-        response = requests.get(url, stream=True)
-        response.raise_for_status()
+        # response = requests.get(url, stream=True)
+        # response.raise_for_status()
         bot.send_message(cid,"در حال ارسال آهنگ")
         # bot.send_audio(cid,response.content)
 
        # باز کردن یک فایل برای ذخیره ویدئو
-        with open(output_path, 'wb') as video_file:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    video_file.write(chunk)
-        bot.send_message(cid,"ذخیره شد")
+        # with open(output_path, 'wb') as video_file:
+        #     for chunk in response.iter_content(chunk_size=8192):
+        #         if chunk:
+        #             video_file.write(chunk)
+        # bot.send_message(cid,"ذخیره شد")
         with open(output_path,'rb') as vois:
             bot.send_audio(cid,vois)
 
@@ -119,6 +120,38 @@ def download_video(url,cid, output_path='videooooooo.mp4'):
         print ("خطا Timeout:", errt)
     except requests.exceptions.RequestException as err:
         print ("خطای نامشخص:", err)
+
+import requests
+from concurrent.futures import ThreadPoolExecutor
+import os
+
+def download_chunk(url, start_byte, end_byte, temp_filename):
+    headers = {'Range': f'bytes={start_byte}-{end_byte}'}
+    response = requests.get(url, headers=headers, stream=True)
+    with open(temp_filename, 'ab') as file:
+        for chunk in response.iter_content(chunk_size=8192):
+            if chunk:
+                file.write(chunk)
+
+def download_file(url, num_chunks=8, filename='aaabaabaaa.mp3'):
+    temp_filename = filename + '.temp'
+    response = requests.head(url)
+    file_size = int(response.headers.get('content-length', 0))
+    chunk_size = file_size // num_chunks
+
+    with ThreadPoolExecutor(max_workers=num_chunks) as executor:
+        futures = []
+
+        for i in range(num_chunks):
+            start_byte = i * chunk_size
+            end_byte = (i + 1) * chunk_size - 1 if i < num_chunks - 1 else file_size - 1
+            futures.append(executor.submit(download_chunk, url, start_byte, end_byte, temp_filename))
+
+        for future in futures:
+            future.result()
+
+    os.rename(temp_filename, filename)
+    print('آهنگ با موفقیت ذخیره شد.')
 
 
 
