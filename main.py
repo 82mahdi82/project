@@ -293,6 +293,7 @@ def command_start(m):
     markup=InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("ارسال نام خواننده",callback_data="send_name"))
     markup.add(InlineKeyboardButton("ارسال نام آهنگ",callback_data="send_song"))
+    markup.add(InlineKeyboardButton("ارسال بخشی از متن آهنگ",callback_data="send_song"))
     bot.copy_message(cid,chanel_id,2,reply_markup=markup)
 
 @bot.message_handler(func=lambda m: get_user_step(m.chat.id)==1)
