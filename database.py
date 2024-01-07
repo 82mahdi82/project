@@ -2,14 +2,14 @@ import mysql.connector
 import time
 
 def creat_product_table(brand,name,size, price,code):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute("insert into product (brand,name,size, price,code) values (%s, %s, %s, %s,%s)",(brand,name,size, price,code))
     cursor.close()
     cnx.commit()
 
 def insert_sales_row_table(inv_id,product_id,qty):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute("insert into sales_row (inv_id,product_id,qty) values (%s,%s,%s)",(inv_id,product_id,qty))
     cnx.commit()
@@ -23,9 +23,8 @@ def insert_sales_table(cid,inv_id):
     # inv_id=res[-1]["inv_id"]
     cursor.close()
     # return inv_id
-
 def insert_shopping_cart_table(cid,product_id,qty):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute("insert into shoppingcart (cid,product_id,qty) values (%s, %s,%s)",(cid,product_id,qty))
     cursor.close()
@@ -33,7 +32,7 @@ def insert_shopping_cart_table(cid,product_id,qty):
 
 
 def delete_shopping_cart_table_cid(cid):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute(f"delete from shoppingcart where cid={cid}")
     cursor.close()
@@ -41,28 +40,28 @@ def delete_shopping_cart_table_cid(cid):
 
 
 def delete_shopping_cart_table(cid,product_id):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute(f"delete from shoppingcart where cid={cid} and product_id={product_id}")
     cursor.close()
     cnx.commit()
 
 def update_shopping_cart_table(cid,product_id,qty):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute(f"update shoppingcart set qty={qty} where cid={cid} and product_id={product_id}")
     cursor.close()
     cnx.commit()
 
 def use_sales_table(cid):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(f"select * from sales where cid={cid}")
     dict_product=cursor.fetchall()
     return dict_product
 
 def use_sales_row_table(inv_id):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(f"select * from sales_row where inv_id={inv_id}")
     dict_product=cursor.fetchall()
@@ -70,14 +69,14 @@ def use_sales_row_table(inv_id):
 
 
 def use_shopping_cart_table(cid,prodoct_id):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(f"select * from shoppingcart where cid={cid} and product_id={prodoct_id}")
     dict_product=cursor.fetchall()
     return dict_product
 
 def use_shopping_cart_table_where(where):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(f"select * from shoppingcart where {where}")
     dict_product=cursor.fetchall()
@@ -86,26 +85,26 @@ def use_shopping_cart_table_where(where):
 
 
 def creat_sales_table(inv_id,cid):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute("insert into sales (inv_id,cid) values (%s, %s)",(inv_id,cid))
     cursor.close()
     cnx.commit()
 
 def creat_sales_row_table(inv_id,product_id,qty):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute("insert into sales_row (inv_id,product_id,qty) values (%s, %s,%s)",(inv_id,product_id,qty))
     cursor.close()
     cnx.commit()
 
 
-def creat_store_database():
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost')
+def creat_projit_db_database():
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service')
     cursor = cnx.cursor()
-    cursor.execute("DROP database IF EXISTS store")
-    cursor.execute("create database if not exists store")
-    cursor.execute("use store")
+    cursor.execute("DROP database IF EXISTS projit_db")
+    cursor.execute("create database if not exists projit_db")
+    cursor.execute("use projit_db")
     cursor.execute("""CREATE TABLE if not exists customer (cid bigint PRIMARY KEY,
                     name VARCHAR(25) not null,
                    phone VARCHAR(15) ,
@@ -142,7 +141,7 @@ def creat_store_database():
     cursor.close()
     cnx.commit()
 def creat_customer_table(cid,name,phone, email,address):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute("select * from customer where cid=%s",(cid,))
     ll=cursor.fetchall()
@@ -159,14 +158,14 @@ def creat_customer_table(cid,name,phone, email,address):
 
 
 def create_one_customer(cid,key,value):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
-    cursor.execute(f"insert ignore into customer (cid,{key}) values ({cid},'{value}')")
+    cursor.execute(f"insert IGNORE into customer (cid,{key}) values ({cid},'{value}')")
     print("PK")
     cnx.commit()
     cursor.close()
 def update_customer_table(cid,set,set_q):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
     cursor.execute(f"update customer set {set}='{set_q}' where cid={cid}")
     print("ok")
@@ -174,28 +173,28 @@ def update_customer_table(cid,set,set_q):
     cursor.close()
 
 def use_product_table():
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)
     cursor.execute("select * from product")
     dict_product=cursor.fetchall()
     return dict_product
 
 def use_shoppingcart_table_where(cid):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(f"select * from shoppingcart where cid={cid}")
     dict_product=cursor.fetchall()
     return dict_product
 
 def use_product_table_where(where):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(f"select * from product where {where}")
     dict_product=cursor.fetchall()
     return dict_product
 
 def use_customer_table_where(where):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)
     cursor.execute(f"select * from customer where {where}")
     dict_customer=cursor.fetchall()
@@ -204,7 +203,7 @@ def use_customer_table_where(where):
 
 
 def start_creat():
-    creat_store_database()
+    creat_projit_db_database()
 
 
     #drill granite
@@ -229,7 +228,7 @@ def start_creat():
     pr2=[32000,38000,57000,70000,78000,90000,95000,110000,120000,138000,160000,190000,220000,240000,260000,380000,410000,450000,480000,495000,570000,650000,700000,840000,910000,950000,990000,1680000,1,1800000,1,2150000]
     for size,price in zip(siz2,pr2):
         creat_product_table("TALENT","HSS-CO",size, price,code)
-        # cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+        # cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
         # cursor = cnx.cursor()
         # cursor.execute(f"update product set brand='TALENT',name='HSS-CO' where size={size} and price={price}")
         # cnx.commit()
