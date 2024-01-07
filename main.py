@@ -767,17 +767,18 @@ def records(m):
                 text+=f"""
     قیمت کل سفارش {i} : {price_total}
     ############################
-    
+
     """
     list_time_sales_row=database.use_sales_table(cid)
     if len(list_time_sales_row)==0:
-        if len(list_awaiting_confirm)!=0:
+        if cid in shopping_cart_stop:
+            if len(list_awaiting_confirm)!=0:
+                markup = ReplyKeyboardMarkup(resize_keyboard=True)
+                markup.add(KeyboardButton("منوی اصلی "))
+                bot.send_message(cid,text,reply_markup=markup)
             markup = ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(KeyboardButton("منوی اصلی "))
-            bot.send_message(cid,text,reply_markup=markup)
-        markup = ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.add(KeyboardButton("منوی اصلی "))
-        bot.send_message(cid,"شما هنوز سفارشی ثبت نکرده اید",reply_markup=markup)
+            bot.send_message(cid,"شما هنوز سفارشی ثبت نکرده اید",reply_markup=markup)
     else:
         text+="محصولات خریداری شده\n"
         for i in list_time_sales_row:
