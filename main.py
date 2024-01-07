@@ -753,8 +753,8 @@ def records(m):
             text+=f"سفارش {i}\n"
             price_total=0
             for b in shopping_cart_stop[cid][i]:
-                price_total+=b['qty']*dict_pro["price"]
                 dict_pro=database.use_product_table_where(f"product_id={b['product_id']}")[0]
+                price_total+=b['qty']*dict_pro["price"]
                 text+=f"""
  >اسم محصول : {dict_pro["name"]}
  >برند : {dict_pro["brand"]}
@@ -781,12 +781,12 @@ def records(m):
     else:
         text+="محصولات خریداری شده\n"
         for i in list_time_sales_row:
-            text+=f"سفارش {i['inv_id']}\n"
+            text+=f"سفارش {i["inv_id"]}\n"
             list_sales_row=database.use_sales_row_table(i["inv_id"])
             price_total=0
             for b in list_sales_row:
-                price_total+=b['qty']*dict_pro["price"]
                 dict_pro=database.use_product_table_where(f"product_id={b['product_id']}")[0]
+                price_total+=b['qty']*dict_pro["price"]
                 text+=f"""
  >اسم محصول : {dict_pro["name"]}
  >برند : {dict_pro["brand"]}
