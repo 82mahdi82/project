@@ -4,6 +4,7 @@ import database
 import telebot
 import mysql.connector
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
+import random
 
 database.start_creat()
 
@@ -112,9 +113,6 @@ def gen_cart_markup(code, size, qty):
     return markup
 
 
-def pricr_cart(price):
-    return f"قیمت کل سبد خرید شما برابر است با :{price}"
-
 
 def show_cart(cid):
     # codes_size = {}
@@ -142,7 +140,7 @@ def show_cart(cid):
     markup2.add(InlineKeyboardButton(
                 "خرید و ثبت نهایی", callback_data="shop_cart"))
     print(price_total)
-    return bot.edit_message_text(pricr_cart(price_total), cid, sssss, reply_markup=markup2)
+    return bot.edit_message_text(f"قیمت کل سبد خرید شما برابر است با :{price_total}", cid, sssss, reply_markup=markup2)
 
 
 @bot.message_handler(content_types=["photo"])
@@ -153,16 +151,18 @@ def name_custom(m):
         checking(cid)
         if cid in block:
             return
+        tracking_code=random.randint(100000,999999)
         list_shopp=database.use_shoppingcart_table_where(cid)
-        shopping_cart_stop.setdefault(cid,[])
+        shopping_cart_stop.setdefault(cid,{})
+        shopping_cart_stop[cid].setdefault(tracking_code,[])
         for i in list_shopp:
-            shopping_cart_stop[cid].append({"product_id":i["product_id"],"qty":i["qty"]})
+            shopping_cart_stop[cid][tracking_code].append({"product_id":i["product_id"],"qty":i["qty"]})
         database.delete_shopping_cart_table_cid(cid)
         mid = m.message_id
         markup=InlineKeyboardMarkup()
+        bot.copy_message(admin,cid,mid,reply_markup=markup,caption=f"{cid}**{tracking_code}")
         markup.add(InlineKeyboardButton("تایید رسید",callback_data="admin_confirm"),InlineKeyboardButton("رد رسید",callback_data="admin_reject"))
-        bot.copy_message(admin,cid,mid,reply_markup=markup,caption=f"{cid}")
-        bot.send_message(cid,"رسید شما برای تایید ارسال شد پس از تایید برای شما پیامی ارسال میشود و میتنوانید محصولات خریداری شده خود در بخش 'سوابق خرید' مشاهده کنید")
+        bot.send_message(cid,f"رسید شما برای تایید ارسال شد شماره پیگیری سفارش شما {tracking_code} است میتوتنید در بخش پیگیری سفارش سفارش خود را پیگیری کنید")
         # database.delete_shopping_cart_table()
         userStep[cid]=0
 
@@ -180,30 +180,31 @@ def call_callback_data(call):
     cid = call.message.chat.id
     mid = call.message.message_id
     re=call.message.photo[-1].file_id
-    uid=int(call.message.caption)
+    uid=int(call.message.caption.split("**")[0])
+    tracking_code=int(call.message.caption.split("**")[-1])
     unblock(cid)
     checking(cid)
     if cid in block:
         return
     data = call.data.split("_")[-1]
     if data =="confirm":
-        inv_id=database.insert_sales_table(uid)
-        list_shop=shopping_cart_stop[uid]
+        database.insert_sales_table(uid,tracking_code)
+        list_shop=shopping_cart_stop[uid][tracking_code]
         print("list:::",list_shop)
         for i in list_shop:
             print("product Id:::",i["product_id"])
-            database.insert_sales_row_table(inv_id,i["product_id"],i["qty"])
-        shopping_cart_stop.pop(uid)
+            database.insert_sales_row_table(tracking_code,i["product_id"],i["qty"])
+        shopping_cart_stop[uid].pop(tracking_code)
         bot.send_message(uid,"رسید شما تایید شد ممنون از خرید شما میتوانید در بخش 'سوابق خرید' خرید خود را مشاهده کنید")
     elif data =="reject":
-        markup = InlineKeyboardMarkup()
-        markup.add(InlineKeyboardButton("ارسال رسید",callback_data="send_receipt"))
-        list_shop=shopping_cart_stop[uid]
+        markup = ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.add(KeyboardButton("منوی اصلی "), KeyboardButton(" سبد خرید 🛒"))
+        list_shop=shopping_cart_stop[uid][tracking_code]
         print("list:::",list_shop)
         for i in list_shop:
             database.insert_shopping_cart_table(uid,i["product_id"],i["qty"])
-        shopping_cart_stop.pop(uid)
-        bot.send_message(uid,"رسیدی که شما ارسال کردید معتبر نمیباشد لطفا رسید معتبری ارسال کنید",reply_markup=markup)
+        shopping_cart_stop[uid].pop(tracking_code)
+        bot.send_message(uid,"رسیدی که شما ارسال کردید معتبر نمیباشد سفارش شما به سبد خریدتان بازگشت لطفا برای خرید به سبد خرید بروید و رسید معتبری ارسال کنید",reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("send_receipt"))
@@ -720,7 +721,7 @@ def cart(m):
 
     markup2 = InlineKeyboardMarkup()
     markup2.add(InlineKeyboardButton("خرید و ثبت نهایی", callback_data="shop_cart"))
-    ee = bot.send_message(cid, pricr_cart(price_total), reply_markup=markup2)
+    ee = bot.send_message(cid, f"قیمت کل سبد خرید شما برابر است با :{price_total}", reply_markup=markup2)
     sssss = int(ee.message_id)
     markup3 = ReplyKeyboardMarkup(resize_keyboard=True)
     markup3.add(KeyboardButton("منوی اصلی "))
@@ -745,14 +746,25 @@ def records(m):
     checking(cid)
     if cid in block:
         return
+    text=""
+    list_awaiting_confirm=shopping_cart_stop[cid]
+    if len(list_awaiting_confirm)>0:
+        text+="محصولات در انتظار تایید رسید\n"
+        for i in list_awaiting_confirm:
+            for b in shopping_cart_stop[cid][i]:
+                text+=f"product_id={b['product_id']}    qty={b['qty']} \n"
     list_time_sales_row=database.use_sales_table(cid)
     if len(list_time_sales_row)==0:
+        if len(list_awaiting_confirm)!=0:
+            markup = ReplyKeyboardMarkup(resize_keyboard=True)
+            markup.add(KeyboardButton("منوی اصلی "))
+            bot.send_message(cid,text,reply_markup=markup)
         markup = ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(KeyboardButton("منوی اصلی "))
-        bot.send_message(cid,"شما هنوز خریدی انجام نداده اید",reply_markup=markup)
+        bot.send_message(cid,"شما هنوز سفارشی ثبت نکرده اید",reply_markup=markup)
     else:
         list_inv_id=[]
-        text=""
+        text+="محصولات خریداری شده\n"
         for i in list_time_sales_row:
             list_sales_row=database.use_sales_row_table(i["inv_id"])
             for b in list_sales_row:
@@ -760,9 +772,6 @@ def records(m):
         markup = ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(KeyboardButton("منوی اصلی "))
         bot.send_message(cid,text,reply_markup=markup)
-
-
-
 
 
 
