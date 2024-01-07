@@ -781,7 +781,7 @@ def records(m):
     else:
         text+="محصولات خریداری شده\n"
         for i in list_time_sales_row:
-            text+=f"سفارش {i["inv_id"]}\n"
+            text+=f"سفارش {i['inv_id']}\n"
             list_sales_row=database.use_sales_row_table(i["inv_id"])
             price_total=0
             for b in list_sales_row:
