@@ -162,7 +162,7 @@ def name_custom(m):
         markup=InlineKeyboardMarkup()
         bot.copy_message(admin,cid,mid,reply_markup=markup,caption=f"{cid}**{tracking_code}")
         markup.add(InlineKeyboardButton("تایید رسید",callback_data="admin_confirm"),InlineKeyboardButton("رد رسید",callback_data="admin_reject"))
-         bot.send_message(cid,f"رسید شما برای تایید ارسال شد شماره پیگیری سفارش شما {tracking_code} است میتوتنید در بخش پیگیری سفارش سفارش خود را پیگیری کنید",reply_markup=markup)
+        bot.send_message(cid,f"رسید شما برای تایید ارسال شد شماره پیگیری سفارش شما {tracking_code} است میتوتنید در بخش پیگیری سفارش سفارش خود را پیگیری کنید",reply_markup=markup)
         # database.delete_shopping_cart_table()
         userStep[cid]=0
 
