@@ -161,7 +161,7 @@ def creat_customer_table(cid,name,phone, email,address):
 def create_one_customer(cid,key,value):
     cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor()
-    cursor.execute(f"insert into customer (cid,{key}) values ({cid},'{value}')")
+    cursor.execute(f"insert IGNORE into customer (cid,{key}) values ({cid},'{value}')")
     print("PK")
     cnx.commit()
     cursor.close()
