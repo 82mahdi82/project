@@ -147,10 +147,13 @@ def show_cart(cid):
 def name_custom(m):
     cid = m.chat.id
     mid = m.message_id
+    print("ppppppppk")
+    print(get_user_step(cid))
     if get_user_step(cid)==10:
+        print("yes")
         bot.copy_message(ch_id,cid,mid)
         bot.send_message(cid,"لطفا در این مرحله نام , برند , سایز و قیمت محصول را مانند مثال ارسال کنید")
-        ##
+        bot.copy_message(cid,ch_id,14)
         userStep[cid]=11
     if get_user_step(cid)==100:
         unblock(cid)
@@ -189,12 +192,12 @@ def call_callback_data(call):
         bot.send_message(cid,"لطفا برای افزودن محصول عکس محصول و توضیحات آن را در کپشن عکس نوشته و ارسال کنید(مانند نمونه) ")
         markup=InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton("نمونه ارسال پیام درست"))
-        bot.copy_message(cid,ch_id,2,reply_markup=markup)
         userStep[cid]=10
-    re=call.message.photo[-1].file_id
-    uid=int(call.message.caption.split("**")[0])
-    tracking_code=int(call.message.caption.split("**")[-1])
+        bot.copy_message(int(cid),-1002046803532,5)
+        userStep[cid]=10
     if data =="confirm":
+        uid=int(call.message.caption.split("**")[0])
+        tracking_code=int(call.message.caption.split("**")[-1])
         database.insert_sales_table(uid,tracking_code)
         list_shop=shopping_cart_stop[uid][tracking_code]
         print("list:::",list_shop)
@@ -204,6 +207,8 @@ def call_callback_data(call):
         shopping_cart_stop[uid].pop(tracking_code)
         bot.send_message(uid,"رسید شما تایید شد ممنون از خرید شما میتوانید در بخش 'سوابق خرید' خرید خود را مشاهده کنید")
     elif data =="reject":
+        uid=int(call.message.caption.split("**")[0])
+        tracking_code=int(call.message.caption.split("**")[-1])
         markup = ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(KeyboardButton("منوی اصلی "), KeyboardButton(" سبد خرید 🛒"))
         list_shop=shopping_cart_stop[uid][tracking_code]
@@ -453,26 +458,28 @@ def command_start(m):
     checking(cid)
     if cid in block:
         return
+    userStep.setdefault(cid,0)
+    database.create_one_customer(cid,"name",f"{m.from_user.first_name}")
     if cid == admin:
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton("افزودن محصول",callback_data="admin_add"), InlineKeyboardButton("حذف محصول",callback_data="admin_delete"))
         bot.send_message(cid,"سلام ادمین گرامی خوش آمدید برای استفاده از ربات از دکمه های زیر استفاده کنید",reply_markup=markup)
-    database.create_one_customer(cid,"name",f"{m.from_user.first_name}")
-    markup = ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(KeyboardButton("محصولات"))
-    markup.add(KeyboardButton(" سبد خرید 🛒"), KeyboardButton(" حساب کاربری 👤"))
-    markup.add(KeyboardButton("ارتباط با ما 📞"), KeyboardButton("سوابق خرید📝"))
-    bot.send_message(cid, "سلام به فروشگاه فورس خوش آمدید")
-    bot.send_message(
-        cid, "برای استفاده از ربات از گزینه های زیر استفاده کنید", reply_markup=markup)
-    # if cid not in knownUsers:
-    #     knownUsers.append(cid)
-    #     bot.send_message(cid, "Hello, stranger, let me scan you...")
-    #     bot.send_message(cid, "Scanning complete, I know you now")
-    #     command_help(m)
-    # else:
-    #     bot.send_message(
-    #         cid, "I already know you, no need for me to scan you again!")
+    else:
+        markup = ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.add(KeyboardButton("محصولات"))
+        markup.add(KeyboardButton(" سبد خرید 🛒"), KeyboardButton(" حساب کاربری 👤"))
+        markup.add(KeyboardButton("ارتباط با ما 📞"), KeyboardButton("سوابق خرید📝"))
+        bot.send_message(cid, "سلام به فروشگاه فورس خوش آمدید")
+        bot.send_message(
+            cid, "برای استفاده از ربات از گزینه های زیر استفاده کنید", reply_markup=markup)
+        # if cid not in knownUsers:
+        #     knownUsers.append(cid)
+        #     bot.send_message(cid, "Hello, stranger, let me scan you...")
+        #     bot.send_message(cid, "Scanning complete, I know you now")
+        #     command_help(m)
+        # else:
+        #     bot.send_message(
+        #         cid, "I already know you, no need for me to scan you again!")
 
 
 
