@@ -10,7 +10,7 @@ database.start_creat()
 
 TOKEN = '6317356905:AAGQ2p8Lo0Kc4mkChTmE7ZbI2p1bzw9cIO8'
 
-shopping_cart_stop={}
+shopping_cart_stop={} #{cid:{tracking_code:[{},{}]}}
 userStep = {}
 ch_id = -1002046803532
 admin = 748626808
@@ -736,7 +736,6 @@ def contact_us(m):
     checking(cid)
     if cid in block:
         return
-
     bot.copy_message(cid, -1002046803532, 8)
 
 @bot.message_handler(func=lambda m: m.text == "سوابق خرید📝")
@@ -751,8 +750,25 @@ def records(m):
     if len(list_awaiting_confirm)>0:
         text+="محصولات در انتظار تایید رسید\n"
         for i in list_awaiting_confirm:
+            text+=f"سفارش {i}\n"
+            price_total=0
             for b in shopping_cart_stop[cid][i]:
-                text+=f"product_id={b['product_id']}    qty={b['qty']} \n"
+                price_total+=b['qty']*dict_pro["price"]
+                dict_pro=database.use_product_table_where(f"product_id={b['product_id']}")[0]
+                text+=f"""
+ >اسم محصول : {dict_pro["name"]}
+ >برند : {dict_pro["brand"]}
+ >فی : {dict_pro["price"]}
+ >تعداد : {b['qty']}
+ >قیمت : {b['qty']*dict_pro["price"]}
+***********************
+
+"""
+            text+=f"""
+قیمت کل سفارش {i} : {price_total}
+#############################
+
+"""
     list_time_sales_row=database.use_sales_table(cid)
     if len(list_time_sales_row)==0:
         if len(list_awaiting_confirm)!=0:
@@ -763,12 +779,28 @@ def records(m):
         markup.add(KeyboardButton("منوی اصلی "))
         bot.send_message(cid,"شما هنوز سفارشی ثبت نکرده اید",reply_markup=markup)
     else:
-        list_inv_id=[]
         text+="محصولات خریداری شده\n"
         for i in list_time_sales_row:
+            text+=f"سفارش {i["inv_id"]}\n"
             list_sales_row=database.use_sales_row_table(i["inv_id"])
+            price_total=0
             for b in list_sales_row:
-                text+=f"product_id={b['product_id']}    qty={b['qty']} \n"
+                price_total+=b['qty']*dict_pro["price"]
+                dict_pro=database.use_product_table_where(f"product_id={b['product_id']}")[0]
+                text+=f"""
+ >اسم محصول : {dict_pro["name"]}
+ >برند : {dict_pro["brand"]}
+ >فی : {dict_pro["price"]}
+ >تعداد : {b['qty']}
+ >قیمت : {b['qty']*dict_pro["price"]}
+* * * * * * * * * * * *
+
+"""
+            text+=f"""
+قیمت کل سفارش {i["inv_id"]} : {price_total}
+#############################
+
+"""
         markup = ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(KeyboardButton("منوی اصلی "))
         bot.send_message(cid,text,reply_markup=markup)
