@@ -146,6 +146,12 @@ def show_cart(cid):
 @bot.message_handler(content_types=["photo"])
 def name_custom(m):
     cid = m.chat.id
+    mid = m.message_id
+    if get_user_step(cid)==10:
+        bot.copy_message(ch_id,cid,mid)
+        bot.send_message(cid,"لطفا در این مرحله نام , برند , سایز و قیمت محصول را مانند مثال ارسال کنید")
+        ##
+        userStep[cid]=11
     if get_user_step(cid)==100:
         unblock(cid)
         checking(cid)
@@ -158,7 +164,6 @@ def name_custom(m):
         for i in list_shopp:
             shopping_cart_stop[cid][tracking_code].append({"product_id":i["product_id"],"qty":i["qty"]})
         database.delete_shopping_cart_table_cid(cid)
-        mid = m.message_id
         markup=InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton("تایید رسید",callback_data="admin_confirm"),InlineKeyboardButton("رد رسید",callback_data="admin_reject"))
         bot.copy_message(admin,cid,mid,reply_markup=markup,caption=f"{cid}**{tracking_code}")
@@ -179,14 +184,16 @@ def call_callback_data(call):
 def call_callback_data(call):
     cid = call.message.chat.id
     mid = call.message.message_id
+    data = call.data.split("_")[-1]
+    if data == "add":
+        bot.send_message(cid,"لطفا برای افزودن محصول عکس محصول و توضیحات آن را در کپشن عکس نوشته و ارسال کنید(مانند نمونه) ")
+        markup=InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton("نمونه ارسال پیام درست"))
+        bot.copy_message(cid,ch_id,2,reply_markup=markup)
+        userStep[cid]=10
     re=call.message.photo[-1].file_id
     uid=int(call.message.caption.split("**")[0])
     tracking_code=int(call.message.caption.split("**")[-1])
-    unblock(cid)
-    checking(cid)
-    if cid in block:
-        return
-    data = call.data.split("_")[-1]
     if data =="confirm":
         database.insert_sales_table(uid,tracking_code)
         list_shop=shopping_cart_stop[uid][tracking_code]
@@ -446,10 +453,10 @@ def command_start(m):
     checking(cid)
     if cid in block:
         return
-    # if cid == admin:
-    #     markup = ReplyKeyboardMarkup(resize_keyboard=True)
-    #     markup.add(KeyboardButton(" سبد خرید 🛒"), KeyboardButton(" حساب کاربری 👤"))
-    #     bot.send_message(cid,"سلام ادمین گرامی خوش آمدید برای استفاده از ربات از دکمه های زیر استفاده کنید")
+    if cid == admin:
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton("افزودن محصول",callback_data="admin_add"), InlineKeyboardButton("حذف محصول",callback_data="admin_delete"))
+        bot.send_message(cid,"سلام ادمین گرامی خوش آمدید برای استفاده از ربات از دکمه های زیر استفاده کنید",reply_markup=markup)
     database.create_one_customer(cid,"name",f"{m.from_user.first_name}")
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(KeyboardButton("محصولات"))
@@ -593,6 +600,29 @@ def name_custom(m):
     bot.send_message(cid,"آدرس شما ذخیره شد✅",reply_markup=markup)
     userStep[cid]=0
 
+@bot.message_handler(func=lambda m: get_user_step(m.chat.id)==11)
+def name_custom(m):
+    cid = m.chat.id
+    text=m.text
+    try:
+        list_text=text.split("\n")
+        brand=list_text[0]
+        name=list_text[1]
+        list_size=[]
+        list_price=[]
+        for i in list_text[2:]:
+            size,price=i.split("@")
+            list_size.append(size)
+            list_price.append(price)
+        updates=bot.get_updates(ch_id)
+        last_mid=updates[-1].message.message_id
+        database.add_product(brand,name,list_size,list_price,last_mid)
+        bot.send_message(cid,"اطلاعات ذخیره شد")
+        userStep[cid]=0
+    except:
+        bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
+
+    
 
  
 
@@ -757,16 +787,16 @@ def records(m):
                     dict_pro=database.use_product_table_where(f"product_id={b['product_id']}")[0]
                     price_total+=b['qty']*dict_pro["price"]
                     text+=f"""
-     >اسم محصول : {dict_pro["name"]}
-     >برند : {dict_pro["brand"]}
-     >فی : {dict_pro["price"]}
-     >تعداد : {b['qty']}
-     >قیمت : {b['qty']*dict_pro["price"]}
+       >اسم محصول : {dict_pro["name"]}
+       >برند : {dict_pro["brand"]}
+       >فی : {dict_pro["price"]}
+       >تعداد : {b['qty']}
+       >قیمت : {b['qty']*dict_pro["price"]}
     ***********************
     """
                 text+=f"""
     قیمت کل سفارش {i} : {price_total}
-    ############################
+    ###########################
 
     """
     list_time_sales_row=database.use_sales_table(cid)
@@ -789,17 +819,17 @@ def records(m):
                 dict_pro=database.use_product_table_where(f"product_id={b['product_id']}")[0]
                 price_total+=b['qty']*dict_pro["price"]
                 text+=f"""
- >اسم محصول : {dict_pro["name"]}
- >برند : {dict_pro["brand"]}
- >فی : {dict_pro["price"]}
- >تعداد : {b['qty']}
- >قیمت : {b['qty']*dict_pro["price"]}
+   >اسم محصول : {dict_pro["name"]}
+   >برند : {dict_pro["brand"]}
+   >فی : {dict_pro["price"]}
+   >تعداد : {b['qty']}
+   >قیمت : {b['qty']*dict_pro["price"]}
 * * * * * * * * * * * *
 
 """
             text+=f"""
 قیمت کل سفارش {i["inv_id"]} : {price_total}
-#############################
+############################
 
 """
         markup = ReplyKeyboardMarkup(resize_keyboard=True)
