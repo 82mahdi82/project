@@ -14,7 +14,7 @@ def insert_sales_row_table(inv_id,product_id,qty):
     cursor.execute("insert into sales_row (inv_id,product_id,qty) values (%s,%s,%s)",(inv_id,product_id,qty))
     cnx.commit()
 def insert_sales_table(cid,inv_id):
-    cnx = mysql.connector.connect(user='root', password='ma8h2dii',host='localhost',database="store")
+    cnx = mysql.connector.connect(user='root', password='nBIdsF#9DKi3CgbPzl8i',host='pro-twl-service',database="projit_db")
     cursor = cnx.cursor(dictionary=True)    
     cursor.execute("insert into sales (cid,inv_id) values (%s,%s)",(cid,inv_id))
     cnx.commit()
