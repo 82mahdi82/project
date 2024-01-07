@@ -746,29 +746,29 @@ def records(m):
     if cid in block:
         return
     text=""
-    list_awaiting_confirm=shopping_cart_stop[cid]
-    if len(list_awaiting_confirm)>0:
-        text+="محصولات در انتظار تایید رسید\n"
-        for i in list_awaiting_confirm:
-            text+=f"سفارش {i}\n"
-            price_total=0
-            for b in shopping_cart_stop[cid][i]:
-                dict_pro=database.use_product_table_where(f"product_id={b['product_id']}")[0]
-                price_total+=b['qty']*dict_pro["price"]
+    if cid in shopping_cart_stop:
+        list_awaiting_confirm=shopping_cart_stop[cid]
+        if len(list_awaiting_confirm)>0:
+            text+="محصولات در انتظار تایید رسید\n"
+            for i in list_awaiting_confirm:
+                text+=f"سفارش {i}\n"
+                price_total=0
+                for b in shopping_cart_stop[cid][i]:
+                    dict_pro=database.use_product_table_where(f"product_id={b['product_id']}")[0]
+                    price_total+=b['qty']*dict_pro["price"]
+                    text+=f"""
+     >اسم محصول : {dict_pro["name"]}
+     >برند : {dict_pro["brand"]}
+     >فی : {dict_pro["price"]}
+     >تعداد : {b['qty']}
+     >قیمت : {b['qty']*dict_pro["price"]}
+    ***********************
+    """
                 text+=f"""
- >اسم محصول : {dict_pro["name"]}
- >برند : {dict_pro["brand"]}
- >فی : {dict_pro["price"]}
- >تعداد : {b['qty']}
- >قیمت : {b['qty']*dict_pro["price"]}
-***********************
-
-"""
-            text+=f"""
-قیمت کل سفارش {i} : {price_total}
-#############################
-
-"""
+    قیمت کل سفارش {i} : {price_total}
+    ############################
+    
+    """
     list_time_sales_row=database.use_sales_table(cid)
     if len(list_time_sales_row)==0:
         if len(list_awaiting_confirm)!=0:
