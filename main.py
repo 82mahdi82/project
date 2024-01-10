@@ -255,7 +255,7 @@ def call_callback_data(call):
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton("سایز ها", callback_data="nothing"))
         for i in list_product:
-            markup.add(InlineKeyboardButton(f"حذف سایز:{i["size"]}", callback_data=f"delsize_{code}_{i['size']}"))
+            markup.add(InlineKeyboardButton(f"حذف سایز:{i['size']}", callback_data=f"delsize_{code}_{i['size']}"))
         markup.add(InlineKeyboardButton("برگشت",callback_data=f"delsize_back_{code}"))
         bot.edit_message_reply_markup(cid,mid,reply_markup=markup)
     elif len(call.data.split("_"))==3:
@@ -274,7 +274,7 @@ def call_callback_data(call):
             markup = InlineKeyboardMarkup()
             markup.add(InlineKeyboardButton("سایز ها", callback_data="nothing"))
             for i in list_product:
-                markup.add(InlineKeyboardButton(f"حذف سایز:{i["size"]}", callback_data=f"delsize_{code}_{i['size']}"))
+                markup.add(InlineKeyboardButton(f"حذف سایز:{i['size']}", callback_data=f"delsize_{code}_{i['size']}"))
             markup.add(InlineKeyboardButton("برگشت",callback_data=f"delsize_back_{code}"))
             bot.edit_message_reply_markup(cid,mid,reply_markup=markup)
 
@@ -312,7 +312,7 @@ def call_callback_data(call):
         for i in list_shop:
             print("product Id:::",i["product_id"])
             database.insert_sales_row_table(tracking_code,i["product_id"],i["qty"])
-            qty_in_stock=database.use_product_table_where(f"product_id={i["product_id"]}")[0]["qty_stock"]
+            qty_in_stock=database.use_product_table_where(f"product_id={i['product_id']}")[0]["qty_stock"]
             print("qqqqqqqqqqtttttyyyyy",qty_in_stock)
             res=int(qty_in_stock)-int(i["qty"])
             database.update_product_table(i["product_id"],res)
