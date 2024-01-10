@@ -852,7 +852,7 @@ def cart(m):
                     markup=InlineKeyboardMarkup()
                     markup.add(InlineKeyboardButton("❌",callback_data="ddddddd"))
                     bot.copy_message(cid, -1002046803532, i["code"], reply_markup=markup,caption="""متاسفانه در حال حاضر این محصول در انبار وجود ندارد و از سبد خرید شما حذف شد""")
-                    product_id_j=database.use_product_table_where(f"code={i["code"]} and size={i["size"]}")[0]["product_id"]
+                    product_id_j=database.use_product_table_where(f"code={i['code']} and size={i['size']}")[0]["product_id"]
                     database.delete_shopping_cart_table(cid,product_id_j)
                 else:
                     bot.copy_message(cid, -1002046803532, i["code"], reply_markup=gen_cart_markup(str(i["code"]), str(i["size"]), i["qty_stock"]),caption=f"""
