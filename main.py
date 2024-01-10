@@ -8,7 +8,7 @@ import random
 
 database.start_creat()
 
-TOKEN = "6581334486:AAERuNCGIo5BTlSwM4Trbc6dDdiIJ2yRVCw"#'6317356905:AAGQ2p8Lo0Kc4mkChTmE7ZbI2p1bzw9cIO8'
+TOKEN = '6317356905:AAGQ2p8Lo0Kc4mkChTmE7ZbI2p1bzw9cIO8'
 
 mid_new_product=0
 shopping_cart_stop={} #{cid:{tracking_code:[{},{}]}}
