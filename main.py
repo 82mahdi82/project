@@ -8,8 +8,9 @@ import random
 
 database.start_creat()
 
-TOKEN = '6317356905:AAGQ2p8Lo0Kc4mkChTmE7ZbI2p1bzw9cIO8'
+TOKEN = "6581334486:AAERuNCGIo5BTlSwM4Trbc6dDdiIJ2yRVCw"#'6317356905:AAGQ2p8Lo0Kc4mkChTmE7ZbI2p1bzw9cIO8'
 
+mid_new_product=0
 shopping_cart_stop={} #{cid:{tracking_code:[{},{}]}}
 userStep = {}
 ch_id = -1002046803532
@@ -143,18 +144,50 @@ def show_cart(cid):
     return bot.edit_message_text(f"قیمت کل سبد خرید شما برابر است با :{price_total}", cid, sssss, reply_markup=markup2)
 
 
+@bot.message_handler(func=lambda m: get_user_step(m.chat.id)==11)
+def name_custom(m):
+    global mid_new_product
+    cid = m.chat.id
+    text=m.text
+    try:
+        print("gaiidi")
+        list_text=text.split("\n")
+        print(list_text)
+        brand=list_text[0]
+        name=list_text[1]
+        list_size=[]
+        list_price=[]
+        print(list_text[2:])
+        for i in list_text[2:]:
+            print(i)
+            i=i.split("@")
+            print(i)
+            list_size.append(i[0])
+            list_price.append(i[1])
+        mid=mid_new_product
+        print(brand,name,list_size,list_price,mid)
+        database.add_product(brand,name,list_size,list_price,mid)
+        bot.send_message(cid,"اطلاعات ذخیره شد")
+        userStep[cid]=0
+    except:
+        bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
+
 @bot.message_handler(content_types=["photo"])
 def name_custom(m):
+    global mid_new_product
     cid = m.chat.id
     mid = m.message_id
     print("ppppppppk")
     print(get_user_step(cid))
     if get_user_step(cid)==10:
+        userStep[cid]=11
         print("yes")
-        bot.copy_message(ch_id,cid,mid)
+        info_pro=bot.copy_message(ch_id,cid,mid)
+        print(info_pro.message_id)
+        mid_new_product=info_pro.message_id
         bot.send_message(cid,"لطفا در این مرحله نام , برند , سایز و قیمت محصول را مانند مثال ارسال کنید")
         bot.copy_message(cid,ch_id,14)
-        userStep[cid]=11
+        
     if get_user_step(cid)==100:
         unblock(cid)
         checking(cid)
@@ -311,11 +344,13 @@ def size_p(call):
     data = call.data
     code = data.split("_")[1]
     list_product=database.use_product_table_where(f"code={int(code)}")
+    print(f"code={int(code)}",code)
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("سایز ها", callback_data="nothing"))
 
     for i in list_product:
-        markup.add(InlineKeyboardButton(f'سایز:{i["size"]}  قیمت:{i["price"]}', callback_data=f"sele_{code[-1]}_{i['size']}"))
+        print("teeeeeeeeeeeeeeeeeeestt:::",f"sele_{code}_{i['size']}")
+        markup.add(InlineKeyboardButton(f'سایز:{i["size"]}  قیمت:{i["price"]}', callback_data=f"sele_{code}_{i['size']}"))
     markup.add(InlineKeyboardButton("برگشت", callback_data=f"delete_{code}"))
     if len(data.split("_")) == 3:
         bot.edit_message_reply_markup(cid, mid, reply_markup=markup)
@@ -611,23 +646,25 @@ def name_custom(m):
 def name_custom(m):
     cid = m.chat.id
     text=m.text
-    try:
-        list_text=text.split("\n")
-        brand=list_text[0]
-        name=list_text[1]
-        list_size=[]
-        list_price=[]
-        for i in list_text[2:]:
-            size,price=i.split("@")
-            list_size.append(size)
-            list_price.append(price)
-        updates=bot.get_updates(ch_id)
-        last_mid=updates[-1].message.message_id
-        database.add_product(brand,name,list_size,list_price,last_mid)
-        bot.send_message(cid,"اطلاعات ذخیره شد")
-        userStep[cid]=0
-    except:
-        bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
+    # try:
+    print("gaiidi")
+    list_text=text.split("\n")
+    brand=list_text[0]
+    name=list_text[1]
+    list_size=[]
+    list_price=[]
+    for i in list_text[2:]:
+        size,price=i.split("@")
+        list_size.append(size)
+        list_price.append(price)
+    updates=bot.get_updates(ch_id)
+    last_mid=updates[-1].message.message_id
+    print(brand,name,list_size,list_price,last_mid)
+    database.add_product(brand,name,list_size,list_price,last_mid)
+    bot.send_message(cid,"اطلاعات ذخیره شد")
+    userStep[cid]=0
+    # except:
+    #     bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
 
     
 
@@ -708,6 +745,7 @@ def product(m):
     for i in list_product:
         set_code.add(i["code"])
     for i in set_code:
+        print("cooode:::",i)
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(
             "انتخاب سایز", callback_data=f"size_{i}"))
@@ -913,7 +951,7 @@ def contact_us(m):
 @bot.message_handler(func=lambda m: True)
 def product(m):
     cid = m.chat.id
-    bot.send_message(cid, "مقدار وارد شده نامعتبر است ")
+    # bot.send_message(cid, "مقدار وارد شده نامعتبر است ")
 
 
 bot.infinity_polling()
