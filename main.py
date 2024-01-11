@@ -10,6 +10,7 @@ database.start_creat()
 
 TOKEN = '6317356905:AAGQ2p8Lo0Kc4mkChTmE7ZbI2p1bzw9cIO8'
 
+new_size_product={"name":"","brand":"","code":0}
 mid_new_product=0
 shopping_cart_stop={} #{cid:{tracking_code:[{},{}]}}
 userStep = {}
@@ -160,6 +161,8 @@ def command_start(m):
     cid = m.chat.id
     if cid==admin:
         userStep[cid]=0
+        markup=ReplyKeyboardRemove()
+        bot.send_message(cid,"پنل ادمین",reply_markup=markup)
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(" افزودن محصول جدید",callback_data="admin_add"), InlineKeyboardButton("حذف محصول",callback_data="admin_delete"))
         markup.add(InlineKeyboardButton("ویرایش محصولات",callback_data="admin_edit"))
@@ -172,7 +175,6 @@ def name_custom(m):
     cid = m.chat.id
     text=m.text
     # try:
-    print("gaiidi")
     list_text=text.split("\n")
     print(list_text)
     brand=list_text[0]
@@ -195,6 +197,27 @@ def name_custom(m):
     userStep[cid]=0
     # except:
     #     bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
+@bot.message_handler(func=lambda m: get_user_step(m.chat.id)==15)
+def name_custom(m):
+    global new_size_product
+    cid = m.chat.id
+    text=m.text
+    list_text=text.split("\n")
+    list_size=[]
+    list_price=[]
+    list_qty_stock=[]
+    print(list_text)
+    for i in list_text:
+        print(i)
+        i=i.split("@")
+        print(i)
+        list_size.append(i[0])
+        list_price.append(i[1])
+        list_qty_stock.append(i[2])
+
+    database.add_product(new_size_product["brand"],new_size_product["name"],list_size,list_price,list_qty_stock,new_size_product["code"])
+    bot.send_message(cid,"اطلاعات ذخیره شد")
+    userStep[cid]=0
 
 @bot.message_handler(content_types=["photo"])
 def name_custom(m):
@@ -232,6 +255,24 @@ def name_custom(m):
         # database.delete_shopping_cart_table()
         userStep[cid]=0
 
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith("new_size"))
+def call_callback_data(call):
+    cid = call.message.chat.id
+    mid = call.message.message_id
+    data=call.data.split("_")
+    new_size_product["code"]=data[2]
+    new_size_product["brand"]=data[3]
+    new_size_product["name"]=data[4]
+    bot.send_message(cid,f"""
+محصول انتخاب شده
+برند : {data[3]}
+اسم محصول : {data[4]}
+""")
+    bot.copy_message(cid,ch_id,50)
+    userStep[cid]=15
+
+
 @bot.callback_query_handler(func=lambda call: call.data.startswith("show_the_deetails"))
 def call_callback_data(call):
     cid = call.message.chat.id
@@ -241,8 +282,13 @@ def call_callback_data(call):
     list_product=database.use_product_table_where(f"code={int(code)}")
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("سایز ها و تعداد در انبار", callback_data="nothing"))
+    brand=""
+    name=""
     for i in list_product:
+        brand=i["brand"]
+        name=i["name"]
         markup.add(InlineKeyboardButton(f'سایز:{i["size"]}  تعداد:{i["qty_stock"]}', callback_data=f"changedqty_{code}_{i['size']}"))
+    markup.add(InlineKeyboardButton("افزودن سایز جدید",callback_data=f"new_size_{code}_{brand}_{name}"))
     markup.add(InlineKeyboardButton("برگشت", callback_data=f"adback_{code}"))
     bot.edit_message_reply_markup(cid, mid, reply_markup=markup)
 @bot.callback_query_handler(func=lambda call: call.data.startswith("use_as_user"))
@@ -1004,10 +1050,12 @@ def records(m):
     checking(cid)
     if cid in block:
         return
+    conf=True
     text=""
     if cid in shopping_cart_stop:
         list_awaiting_confirm=shopping_cart_stop[cid]
         if len(list_awaiting_confirm)>0:
+            conf=False
             text+="محصولات در انتظار تایید رسید\n"
             for i in list_awaiting_confirm:
                 text+=f"سفارش {i}\n"
@@ -1028,21 +1076,15 @@ def records(m):
     ###########################
 
     """
-    list_time_sales_row=database.use_sales_table(cid)
-    if len(list_time_sales_row)==0:
-        if cid in shopping_cart_stop:
-            if len(list_awaiting_confirm)!=0:
-                markup = ReplyKeyboardMarkup(resize_keyboard=True)
-                markup.add(KeyboardButton("منوی اصلی "))
-                if cid==admin:
-                    markup.add("برگشت به منو ادمین")
-                bot.send_message(cid,text,reply_markup=markup)
             markup = ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(KeyboardButton("منوی اصلی "))
             if cid==admin:
                 markup.add("برگشت به منو ادمین")
-            bot.send_message(cid,"شما هنوز سفارشی ثبت نکرده اید",reply_markup=markup)
-    else:
+            bot.send_message(cid,text,reply_markup=markup)
+    text=""
+    list_time_sales_row=database.use_sales_table(cid)
+    if len(list_time_sales_row)!=0:
+        conf=False
         text+="محصولات خریداری شده\n"
         for i in list_time_sales_row:
             text+=f"سفارش {i['inv_id']}\n"
@@ -1070,6 +1112,13 @@ def records(m):
         if cid==admin:
             markup.add("برگشت به منو ادمین")
         bot.send_message(cid,text,reply_markup=markup)
+    if conf:
+        markup = ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.add(KeyboardButton("منوی اصلی "))
+        if cid==admin:
+            markup.add("برگشت به منو ادمین")
+        bot.send_message(cid,"شما هنوز سفارشی ثبت نکرده اید",reply_markup=markup)
+    
 
 
 
