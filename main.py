@@ -205,6 +205,7 @@ def name_custom(m):
         markup=InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton("تایید رسید",callback_data="admin_confirm"),InlineKeyboardButton("رد رسید",callback_data="admin_reject"))
         bot.copy_message(admin,cid,mid,reply_markup=markup,caption=f"{cid}**{tracking_code}")
+        bot.send_message(admin,"وضعیت رسید را مشخص کنید")
         bot.send_message(cid,f"رسید شما برای تایید ارسال شد شماره پیگیری سفارش شما {tracking_code} است میتوتنید در بخش پیگیری سفارش سفارش خود را پیگیری کنید")
         # database.delete_shopping_cart_table()
         userStep[cid]=0
@@ -358,13 +359,20 @@ def call_callback_data(call):
         for i in list_price:
             price_total+=i["price"]*b["qty"]
     bot.delete_message(cid,mid)
-    markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton("ارسال رسید",callback_data="send_receipt"))
-    bot.send_message(cid,f"""
-قیمت : {price_total}
-لطفا دقیقا مبلغ بالا را به شماره کارت زیر ارسال کنید و سپس با استفاده از دکمه زیر رسید خود را ارسال کنید
-شماره کارت : 00600606006006000600
-""",reply_markup=markup)
+    dict_info_user=database.use_customer_table_where(f"cid={cid}")
+    if dict_info_user["phone"]!=None and dict_info_user["name"]!=None and dict_info_user["address"]!=None:
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton("ارسال رسید",callback_data="send_receipt"))
+        bot.send_message(cid,f"""
+    قیمت : {price_total}
+    لطفا دقیقا مبلغ بالا را به شماره کارت زیر ارسال کنید و سپس با استفاده از دکمه زیر رسید خود را ارسال کنید
+    شماره کارت : 00600606006006000600
+    """,reply_markup=markup)
+    else:
+        markup=ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.add(" حساب کاربری 👤")
+        markup.add("منوی اصلی")
+        bot.send_message(cid,"کاربر گرامی لطفا ابتدا در بخش 'حساب کاربری' اطلاعات خود را تکمیل کنید ")
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("cart"))
 def call_callback_data(call):
@@ -705,34 +713,6 @@ def name_custom(m):
     bot.send_message(cid,"آدرس شما ذخیره شد✅",reply_markup=markup)
     userStep[cid]=0
 
-# @bot.message_handler(func=lambda m: get_user_step(m.chat.id)==11)
-# def name_custom(m):
-#     cid = m.chat.id
-#     text=m.text
-#     # try:
-#     print("gaiidi")
-#     list_text=text.split("\n")
-#     brand=list_text[0]
-#     name=list_text[1]
-#     list_size=[]
-#     list_price=[]
-#     list_qty_stock=[]
-#     for i in list_text[2:]:
-#         size,price,qty_stock=tuple(i.split("@"))
-#         list_size.append(size)
-#         list_price.append(price)
-#         list_qty_stock.append(qty_stock)
-#     updates=bot.get_updates(ch_id)
-#     last_mid=updates[-1].message.message_id
-#     print(brand,name,list_size,list_price,last_mid)
-#     database.add_product(brand,name,list_size,list_price,list_qty_stock,last_mid)
-#     bot.send_message(cid,"اطلاعات ذخیره شد")
-#     userStep[cid]=0
-#     # except:
-#     #     bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
-
-    
-
  
 
 @bot.message_handler(content_types=["contact"])
@@ -787,13 +767,13 @@ def command_start(m):
     bot.send_message(cid,f"""
 اطلاعات شما📝
 
-نام : {name}
+* نام : {name}
 
-شماره تلفن : {phone}
+* شماره تلفن : {phone}
 
 ایمیل : {email}
 
-آدرس : {add}
+* آدرس : {add}
 """,reply_markup=markup)
 
 
@@ -977,14 +957,15 @@ def contact_us(m):
         bot.send_message(cid,f"""
 اطلاعات شما📝
 
-نام : {m.from_user.first_name}
+* نام : {m.from_user.first_name}
 
-شماره تلفن : ❌
+* شماره تلفن : ❌
 
 ایمیل : ❌
 
-آدرس : ❌
+* آدرس : ❌
 """,reply_markup=markup)
+        bot.send_message(cid,"برای خرید لطفا فیلد های ستاره دار را پر کنید")
         database.create_one_customer(cid,"name",f"{m.from_user.first_name}")
         
     else:
@@ -1011,13 +992,13 @@ def contact_us(m):
         bot.send_message(cid,f"""
 اطلاعات شما📝
 
-نام : {name}
+* نام : {name}
 
-شماره تلفن : {phone}
+* شماره تلفن : {phone}
 
 ایمیل : {email}
 
-آدرس : {add}
+* آدرس : {add}
 """,reply_markup=markup)
 
 
