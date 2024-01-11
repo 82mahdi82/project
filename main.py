@@ -174,51 +174,52 @@ def name_custom(m):
     global mid_new_product
     cid = m.chat.id
     text=m.text
-    # try:
-    list_text=text.split("\n")
-    print(list_text)
-    brand=list_text[0]
-    name=list_text[1]
-    list_size=[]
-    list_price=[]
-    list_qty_stock=[]
-    print(list_text[2:])
-    for i in list_text[2:]:
-        print(i)
-        i=i.split("@")
-        print(i)
-        list_size.append(i[0])
-        list_price.append(i[1])
-        list_qty_stock.append(i[2])
-    mid=mid_new_product
-    print(brand,name,list_size,list_price,mid)
-    database.add_product(brand,name,list_size,list_price,list_qty_stock,mid)
-    bot.send_message(cid,"اطلاعات ذخیره شد")
-    userStep[cid]=0
-    # except:
-    #     bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
+    try:
+        list_text=text.split("\n")
+        print(list_text)
+        brand=list_text[0]
+        name=list_text[1]
+        list_size=[]
+        list_price=[]
+        list_qty_stock=[]
+        print(list_text[2:])
+        for i in list_text[2:]:
+            print(i)
+            i=i.split("@")
+            print(i)
+            list_size.append(i[0])
+            list_price.append(i[1])
+            list_qty_stock.append(i[2])
+        mid=mid_new_product
+        print(brand,name,list_size,list_price,mid)
+        database.add_product(brand,name,list_size,list_price,list_qty_stock,mid)
+        bot.send_message(cid,"اطلاعات ذخیره شد")
+        userStep[cid]=0
+    except:
+        bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
 @bot.message_handler(func=lambda m: get_user_step(m.chat.id)==15)
 def name_custom(m):
     global new_size_product
     cid = m.chat.id
     text=m.text
-    list_text=text.split("\n")
-    list_size=[]
-    list_price=[]
-    list_qty_stock=[]
-    print(list_text)
-    for i in list_text:
-        print(i)
-        i=i.split("@")
-        print(i)
-        list_size.append(i[0])
-        list_price.append(i[1])
-        list_qty_stock.append(i[2])
-
-    database.add_product(new_size_product["brand"],new_size_product["name"],list_size,list_price,list_qty_stock,new_size_product["code"])
-    bot.send_message(cid,"اطلاعات ذخیره شد")
-    userStep[cid]=0
-
+    try:
+        list_text=text.split("\n")
+        list_size=[]
+        list_price=[]
+        list_qty_stock=[]
+        print(list_text)
+        for i in list_text:
+            print(i)
+            i=i.split("@")
+            print(i)
+            list_size.append(i[0])
+            list_price.append(i[1])
+            list_qty_stock.append(i[2])
+        database.add_product(new_size_product["brand"],new_size_product["name"],list_size,list_price,list_qty_stock,new_size_product["code"])
+        bot.send_message(cid,"اطلاعات ذخیره شد")
+        userStep[cid]=0
+    except:
+        bot.send_message(cid,"لطفا اطلاعات را مانند نمونه ارسال کنید")
 @bot.message_handler(content_types=["photo"])
 def name_custom(m):
     global mid_new_product
