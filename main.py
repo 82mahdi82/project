@@ -372,7 +372,7 @@ def call_callback_data(call):
         markup=ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(" حساب کاربری 👤")
         markup.add("منوی اصلی")
-        bot.send_message(cid,"کاربر گرامی لطفا ابتدا در بخش 'حساب کاربری' اطلاعات خود را تکمیل کنید ")
+        bot.send_message(cid,"کاربر گرامی لطفا ابتدا در بخش 'حساب کاربری' اطلاعات خود را تکمیل کنید ",reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("cart"))
 def call_callback_data(call):
