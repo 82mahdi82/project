@@ -1,8 +1,6 @@
 import time
-import os
 import database
 import telebot
-import mysql.connector
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 import random
 
@@ -21,10 +19,7 @@ edit_deerails_admin={}
 sssss = 0
 check = {}  # cid:[[2222 , 2224] , 1]
 block = {}
-commands = {  # command description used in the "help" command
-    'start': 'Get used to the bot',
-    'help': 'Gives you information about the available commands',
-}
+
 
 
 def get_user_step(uid):
@@ -32,7 +27,6 @@ def get_user_step(uid):
         return userStep[uid]
     else:
         userStep[uid] = 0
-        print("New user detected, who hasn't used \"/start\" yet")
         return 0
 
 
@@ -63,9 +57,8 @@ def checking(cid):
         timespam = check[cid]["time2"]-check[cid]["time1"]
         if int(timespam) < 3:
             check[cid]["score"] += 1
-            if check[cid]["score"] == 10:
+            if check[cid]["score"] == 20:
                 bot.send_message(cid,"شما به دلیل اسپم زیاد به مدت 1 ساعت بن شدید")
-                print("block")
                 check[cid]["score"] = 0
                 block[cid] = time.time()+10
         elif int(timespam) > 3:
@@ -74,25 +67,25 @@ def checking(cid):
             else:
                 check[cid]["score"] -= 1
 
-def listener(messages):
-    """
-    When new messages arrive TeleBot will call this function.
-    """
-    for m in messages:
-        cid = m.chat.id
-        if m.content_type == 'text':
-            print(str(m.chat.first_name) +
-                  " [" + str(m.chat.id) + "]: " + m.text)
-        elif m.content_type == 'photo':
-            print(str(m.chat.first_name) +
-                  " [" + str(m.chat.id) + "]: " + "New photo recieved")
-        elif m.content_type == 'document':
-            print(str(m.chat.first_name) +
-                  " [" + str(m.chat.id) + "]: " + 'New Document recieved')
+# def listener(messages):
+#     """
+#     When new messages arrive TeleBot will call this function.
+#     """
+#     for m in messages:
+#         cid = m.chat.id
+#         if m.content_type == 'text':
+#             print(str(m.chat.first_name) +
+#                   " [" + str(m.chat.id) + "]: " + m.text)
+#         elif m.content_type == 'photo':
+#             print(str(m.chat.first_name) +
+#                   " [" + str(m.chat.id) + "]: " + "New photo recieved")
+#         elif m.content_type == 'document':
+#             print(str(m.chat.first_name) +
+#                   " [" + str(m.chat.id) + "]: " + 'New Document recieved')
 
 
 bot = telebot.TeleBot(TOKEN)
-bot.set_update_listener(listener)
+# bot.set_update_listener(listener)
 
 def gen_product_markup_admin(code, size, qty):
     markup = InlineKeyboardMarkup()
@@ -128,20 +121,7 @@ def gen_cart_markup(code, size, qty):
 
 
 def show_cart(cid):
-    # codes_size = {}
-    # for code in shopping_cart[cid]:
-    #     codes_size.setdefault(code,[])
-    #     for size in shopping_cart[cid][code]:
-    #         codes_size[code].append(size)
-    # markup2 = InlineKeyboardMarkup()
-    # markup2.add(InlineKeyboardButton(
-    #             "خرید و ثبت نهایی", callback_data="shop_cart"))
     list_shoppingcart=database.use_shopping_cart_table_where(f"cid={cid}")
-    # print(len(list_shoppingcart))
-    # if len(list_shoppingcart)==0:
-    #     markup = ReplyKeyboardMarkup(resize_keyboard=True)
-    #     markup.add(KeyboardButton("منوی اصلی "))
-    #     
     price_total=0
     for b in list_shoppingcart:
         list_price=database.use_product_table_where(f"product_id={b['product_id']}")
@@ -152,7 +132,6 @@ def show_cart(cid):
     markup2 = InlineKeyboardMarkup()
     markup2.add(InlineKeyboardButton(
                 "خرید و ثبت نهایی", callback_data="shop_cart"))
-    print(price_total)
     return bot.edit_message_text(f"قیمت کل سبد خرید شما برابر است با :{price_total}", cid, sssss, reply_markup=markup2)
 
 
@@ -176,22 +155,17 @@ def name_custom(m):
     text=m.text
     try:
         list_text=text.split("\n")
-        print(list_text)
         brand=list_text[0]
         name=list_text[1]
         list_size=[]
         list_price=[]
         list_qty_stock=[]
-        print(list_text[2:])
         for i in list_text[2:]:
-            print(i)
             i=i.split("@")
-            print(i)
             list_size.append(i[0])
             list_price.append(i[1])
             list_qty_stock.append(i[2])
         mid=mid_new_product
-        print(brand,name,list_size,list_price,mid)
         database.add_product(brand,name,list_size,list_price,list_qty_stock,mid)
         bot.send_message(cid,"اطلاعات ذخیره شد")
         userStep[cid]=0
@@ -207,11 +181,8 @@ def name_custom(m):
         list_size=[]
         list_price=[]
         list_qty_stock=[]
-        print(list_text)
         for i in list_text:
-            print(i)
             i=i.split("@")
-            print(i)
             list_size.append(i[0])
             list_price.append(i[1])
             list_qty_stock.append(i[2])
@@ -225,13 +196,9 @@ def name_custom(m):
     global mid_new_product
     cid = m.chat.id
     mid = m.message_id
-    print("ppppppppk")
-    print(get_user_step(cid))
     if get_user_step(cid)==10:
         userStep[cid]=11
-        print("yes")
         info_pro=bot.copy_message(ch_id,cid,mid)
-        print(info_pro.message_id)
         mid_new_product=info_pro.message_id
         bot.send_message(cid,"لطفا در این مرحله نام , برند , سایز و قیمت محصول را مانند مثال ارسال کنید")
         bot.copy_message(cid,ch_id,14)
@@ -382,7 +349,6 @@ def call_callback_data(call):
         for i in list_product:
             set_code.add(i["code"])
         for i in set_code:
-            print("cooode:::",i)
             markup = InlineKeyboardMarkup()
             markup.add(InlineKeyboardButton("حذف سایز مشخص",callback_data=f"delsize_{i}"))
             markup.add(InlineKeyboardButton("حذف کامل محصول", callback_data=f"wait_delete_{i}"))
@@ -396,7 +362,6 @@ def call_callback_data(call):
         for i in list_product:
             set_code.add(i["code"])
         for i in set_code:
-            print("cooode:::",i)
             markup = InlineKeyboardMarkup()
             markup.add(InlineKeyboardButton("مشاهده جزئیات",callback_data=f"show_the_deetails_{i}"))
             mid_p=bot.copy_message(cid, -1002046803532, i,reply_markup=markup)
@@ -420,12 +385,9 @@ def call_callback_data(call):
         tracking_code=int(call.message.caption.split("**")[-1])
         database.insert_sales_table(uid,tracking_code)
         list_shop=shopping_cart_stop[uid][tracking_code]
-        print("list:::",list_shop)
         for i in list_shop:
-            print("product Id:::",i["product_id"])
             database.insert_sales_row_table(tracking_code,i["product_id"],i["qty"])
             qty_in_stock=database.use_product_table_where(f"product_id={i['product_id']}")[0]["qty_stock"]
-            print("qqqqqqqqqqtttttyyyyy",qty_in_stock)
             res=int(qty_in_stock)-int(i["qty"])
             database.update_product_table(i["product_id"],res)
         shopping_cart_stop[uid].pop(tracking_code)
@@ -438,7 +400,6 @@ def call_callback_data(call):
         if cid==admin:
             markup.add("برگشت به منو ادمین")
         list_shop=shopping_cart_stop[uid][tracking_code]
-        print("list:::",list_shop)
         for i in list_shop:
             database.insert_shopping_cart_table(uid,i["product_id"],i["qty"])
         shopping_cart_stop[uid].pop(tracking_code)
@@ -499,7 +460,6 @@ def call_callback_data(call):
     mid = call.message.message_id
     data = call.data
     ch = data.split("_")[1]
-    print(f'cid: {cid}, mid: {mid}, data: {data}')
     if ch == 'edit':
         alki, command, code, size, qty = data.split('_')
         list_product_id=database.use_product_table_where(f"code={code} and size={size}")
@@ -547,11 +507,9 @@ def size_p(call):
     data = call.data
     code = data.split("_")[1]
     list_product=database.use_product_table_where(f"code={int(code)}")
-    print(f"code={int(code)}",code)
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("سایز ها", callback_data="nothing"))
     for i in list_product:
-        print("teeeeeeeeeeeeeeeeeeestt:::",f"sele_{code}_{i['size']}")
         markup.add(InlineKeyboardButton(f'سایز:{i["size"]}  قیمت:{i["price"]}', callback_data=f"sele_{code}_{i['size']}"))
     markup.add(InlineKeyboardButton("برگشت", callback_data=f"delete_{code}"))
     if len(data.split("_")) == 3:
@@ -645,7 +603,7 @@ def call_callback_data(call):
         for i in list_product_id:
             product_id=i["product_id"]
             database.update_product_table(product_id,int(qty))
-        bot.answer_callback_query(call.id, f'item added to basket')
+        bot.answer_callback_query(call.id, f'تعداد موجود در انبار آپدیت شد')
         markup2 = InlineKeyboardMarkup()
         markup2.add(InlineKeyboardButton("برگشت", callback_data=f"show_the_deetails_{code}"))
         bot.edit_message_reply_markup(cid, mid, reply_markup=markup2)
@@ -662,7 +620,6 @@ def call_callback_data(call):
     mid = call.message.message_id
     data = call.data
     ch = data.split("_")[1]
-    print(f'cid: {cid}, mid: {mid}, data: {data}')
     if ch == 'edit':
         alki, command, code, size, qty = data.split('_')
         list_product_id=database.use_product_table_where(f"code={code} and size={size}")
@@ -744,23 +701,6 @@ def command_start(m):
         bot.send_message(
             cid, "برای استفاده از ربات از گزینه های زیر استفاده کنید", reply_markup=markup)
 
-
-
-
-@bot.message_handler(commands=['help'])
-def command_help(m):
-    cid = m.chat.id
-    unblock(cid)
-    checking(cid)
-    if cid in block:
-        return
-    help_text = "The following commands are available: \n"
-    for key in commands:
-        help_text += "/" + key + ": "
-        help_text += commands[key] + "\n"
-    bot.send_message(cid, help_text)
-    userStep.setdefault(cid,0)
-    userStep[cid]=0
 
 
 @bot.message_handler(func=lambda m: m.text == "منوی اصلی")
@@ -883,10 +823,8 @@ def name_custom(m):
 
 @bot.message_handler(content_types=["contact"])
 def address_custom(m):
-    print("yes")
     cid = m.chat.id
     phone=m.contact.phone_number
-    print(phone)
     unblock(cid)
     checking(cid)
     if cid in block:
@@ -961,7 +899,6 @@ def product(m):
     for i in list_product:
         set_code.add(i["code"])
     for i in set_code:
-        print("cooode:::",i)
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(
             "انتخاب سایز", callback_data=f"size_{i}"))
@@ -976,7 +913,6 @@ def product(m):
         markup2.add("برگشت به منو ادمین")
     bot.send_message(
         cid, "برای دسترسی به سبد خرید یا منوی اصلی از گزینه های پایین استفاده کنید.", reply_markup=markup2)
-    print(products)
 
 
 @bot.message_handler(func=lambda m: m.text == "سبد خرید 🛒")
@@ -999,7 +935,6 @@ def cart(m):
     update=False
     for b in list_shoppingcart:
         list_price=database.use_product_table_where(f"product_id={b['product_id']}")
-        print(list_price)
         for i in list_price:
             if b["qty"]>i["qty_stock"]:
                 update=True
